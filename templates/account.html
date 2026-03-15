@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Аккаунт</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(145deg, #1a1a2e, #000000);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            margin: 0;
+            color: #FFFFFF;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .account-container {
+            max-width: 700px;
+            margin: 40px auto;
+            width: 100%;
+        }
+
+        .account-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .account-header h1 {
+            color: #FFFFFF;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(98, 64, 176, 0.5);
+        }
+
+        .account-card {
+            background: linear-gradient(145deg, #2d1b48, #1a0f2e);
+            border: 1px solid #6240b0;
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(98, 64, 176, 0.3);
+        }
+
+        .account-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(145deg, #6240b0, #392b70);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            border: 4px solid #9f7aea;
+            box-shadow: 0 5px 15px rgba(98, 64, 176, 0.5);
+        }
+
+        .account-avatar i {
+            font-size: 60px;
+            color: #FFFFFF;
+        }
+
+        .account-name {
+            text-align: center;
+            color: #FFFFFF;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 0 0 8px rgba(159, 122, 234, 0.5);
+        }
+
+        .account-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #6240b0;
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #6240b0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #b794f4;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .info-value {
+            color: #FFFFFF;
+            font-size: 1.1rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(145deg, #6240b0, #392b70);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid #9f7aea;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: linear-gradient(145deg, #6240b0, #392b70);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid #9f7aea;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(145deg, #7356c0, #4a3a80);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(98, 64, 176, 0.6);
+            color: #FFFFFF;
+        }
+
+        .btn-add {
+            background: linear-gradient(145deg, #7b4eb0, #5a3a8a) !important;
+            border: 1px solid #b794f4 !important;
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(145deg, #8c5ec0, #6a4a9a) !important;
+        }
+    </style>
+</head>
+<body>
+<div class="account-container">
+    <div class="account-header">
+        <h1>Личный кабинет</h1>
+    </div>
+    <div class="account-card">
+        <div class="account-avatar">
+            <i class="bi bi-person-fill"></i>
+        </div>
+
+        <h2 class="account-name">{{ user.username if user else 'Гость' }}</h2>
+
+        <div class="account-info">
+            <div class="info-item">
+                <span class="info-label">ID пользователя</span>
+                <span class="info-value">{{ user.id if user else 'Не указано' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Имя пользователя</span>
+                <span class="info-value">{{ user.username if user else 'Не указано' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ user.email if user else 'Не указано' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Пароль</span>
+                <span class="info-value">••••••••</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Роль</span>
+                <span class="info-value">
+                    {% if user and user.role is defined %}
+                        {% if user.role == 0 %}
+                            <span class="role-badge">Пользователь</span>
+                        {% elif user.role == 1 %}
+                            <span class="role-badge">Администратор</span>
+                        {% else %}
+                            <span class="role-badge">Роль {{ user.role }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="role-badge">Не определена</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Главная</a>
+            {% if user and user.role == 1 %}
+                <a href="{{ url_for('add_user') }}" class="btn-add">Добавить пользователя</a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
