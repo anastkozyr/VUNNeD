@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card text-center">
+            <div class="card-header">
+                <h2><i class="bi bi-stars"></i> Добро пожаловать в Galactic Signal Classifier</h2>
+            </div>
+            <div class="card-body">
+                <img src="https://img.icons8.com/clouds/200/000000/alien-command.png" alt="Alien" class="mb-4">
+                <h4 class="mb-4">Классификация инопланетных сигналов с помощью нейросети</h4>
+                <p class="lead">
+                    Система позволяет определять цивилизацию-отправителя по радиосигналу
+                    с высокой точностью.
+                </p>
+                <div class="row mt-5">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <i class="bi bi-robot display-4"></i>
+                                <h5>Нейросеть</h5>
+                                <p>Точность определения 98%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <i class="bi bi-bar-chart display-4"></i>
+                                <h5>Аналитика</h5>
+                                <p>Подробные графики и статистика</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <i class="bi bi-cloud-upload display-4"></i>
+                                <h5>Загрузка</h5>
+                                <p>Поддержка .npz формата</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if not current_user.is_authenticated %}
+                <div class="mt-5">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-2">Войти</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg">Регистрация</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
