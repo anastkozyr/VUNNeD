@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Аккаунт</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+          background: #03050b;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+          position: relative;
+        }
+        .account-container {
+        background: #03050b;
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        .account-header {
+        background: #03050b;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .account-header h1 {
+            color: linear-gradient(145deg, #6240b0, #392b70);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .account-card {
+            background: #FFFFFF;
+            border: 2px solid #EDD5D6;
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(74, 68, 85, 0.1);
+        }
+
+        .account-avatar {
+            width: 120px;
+            height: 120px;
+            background: #EDD5D6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            border: 4px solid #FFFFFF;
+            box-shadow: 0 5px 15px rgba(74, 68, 85, 0.2);
+        }
+
+        .account-avatar i {
+            font-size: 60px;
+            color: #4A4455;
+        }
+
+        .account-name {
+            text-align: center;
+            color: #4A4455;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .account-info {
+            background: #F6F4F2;
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #EDD5D6;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #4A4455;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .info-value {
+            color: #2D2D2D;
+            font-size: 1.1rem;
+        }
+        .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="account-container">
+    <div class="account-header">
+        <h1>Личный кабинет</h1>
+    </div>
+    <div class="account-card">
+        <div class="account-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+
+        <h2 class="account-name">{{ current_user.username }}</h2>
+         <div class="account-info">
+            <div class="info-item">
+                <span class="info-label">Имя пользователя</span>
+                <span class="info-value">{{ current_user.username }}</span>
+            </div>
+             <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ current_user.email }}</span>
+            </div>
+             <div class="info-item">
+                <span class="info-label">Пароль</span>
+                <span class="info-value">{{ current_user.password }}</span>
+            </div>
+             <div class="info-item">
+                <span class="info-label">Роль</span>
+                <span class="info-value">{{ current_user.role }}</span>
+            </div>
+         {% if current_user.role == 0 %}
+             <div class="nav-links">
+                <a href="{{ url_for('index') }}">Главная</a>
+             </div>
+         {% else %}
+             <div class="nav-links">
+                <a href="{{ url_for('index') }}">Главная</a>
+                <a href="{{ url_for('login_user') }}" class="btn-add">Добавить пользователя</a>
+             </div>
+
+</div>
+</body>
+</html>
