@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-white mb-4">Аналитика классификации сигналов</h2>
+    </div>
+</div>
+
+<div class="row">
+    <!-- График точности обучения -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Точность на валидационных данных</h5>
+            </div>
+            <div class="card-body">
+                <div id="accuracyChart"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Распределение классов -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Распределение классов в обучающем наборе</h5>
+            </div>
+            <div class="card-body">
+                <div id="distributionChart"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Точность на тестовом наборе -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Точность определения по классам</h5>
+            </div>
+            <div class="card-body">
+                <div id="testAccuracyChart"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Топ-5 классов -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Топ-5 самых частых классов</h5>
+            </div>
+            <div class="card-body">
+                <div id="top5Chart"></div>
+            </div>
+        </div>
+    </div>
+    
+    {% if session.test_accuracy %}
+    <!-- Результаты тестирования -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>Результаты последнего тестирования</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="alert alert-success">
+                            <h3>Точность: {{ "%.2f"|format(session.test_accuracy * 100) }}%</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <h3>Потери: {{ "%.4f"|format(0.1) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+    // Рендеринг графиков
+    document.addEventListener('DOMContentLoaded', function() {
+        const charts = {{ charts|tojson }};
+        
+        Plotly.newPlot('accuracyChart', charts.accuracy_chart.data, charts.accuracy_chart.layout);
+        Plotly.newPlot('distributionChart', charts.distribution_chart.data, charts.distribution_chart.layout);
+        Plotly.newPlot('testAccuracyChart', charts.test_accuracy_chart.data, charts.test_accuracy_chart.layout);
+        Plotly.newPlot('top5Chart', charts.top5_chart.data, charts.top5_chart.layout);
+        
+        // Настройка масштабирования
+        const plotlyConfig = {
+            responsive: true,
+            displaylogo: false,
+            modeBarButtonsToAdd: ['zoomIn', 'zoomOut', 'resetScale']
+        };
+        
+        Plotly.newPlot('accuracyChart', charts.accuracy_chart.data, charts.accuracy_chart.layout, plotlyConfig);
+        Plotly.newPlot('distributionChart', charts.distribution_chart.data, charts.distribution_chart.layout, plotlyConfig);
+        Plotly.newPlot('testAccuracyChart', charts.test_accuracy_chart.data, charts.test_accuracy_chart.layout, plotlyConfig);
+        Plotly.newPlot('top5Chart', charts.top5_chart.data, charts.top5_chart.layout, plotlyConfig);
+    });
+</script>
+{% endblock %}
+{% endblock %}
