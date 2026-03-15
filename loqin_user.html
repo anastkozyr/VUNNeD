@@ -15,19 +15,19 @@
           position: relative;
         }
         .account-container {
-        linear-gradient(145deg, #6240b0, #392b70)
+        color: linear-gradient(145deg, #6240b0, #392b70);
             max-width: 700px;
             margin: 40px auto;
         }
 
         .account-header {
-        linear-gradient(145deg, #6240b0, #392b70)
+        color: #FFFFFF;
             text-align: center;
             margin-bottom: 40px;
         }
 
         .account-header h1 {
-           linear-gradient(145deg, #6240b0, #392b70)
+           color: #FFFFFF;
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
@@ -55,13 +55,13 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #4A4455;
-            background: #FFFFFF;
+            border-color: #000000;
+            background: linear-gradient(145deg, #6240b0, #392b70);;
             box-shadow: 0 0 0 4px rgba(74, 68, 85, 0.1);
         }
 
         .form-group input::placeholder {
-            color: #4A4455;
+            color: #dbd3d3;
             opacity: 0.3;
         }
 
@@ -77,6 +77,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 10px;
+            display: flex ;
+            justify-content: center;
+            text-decoration: none ;
         }
 
         .form-button:hover {
