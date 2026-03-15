@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нейросеть - Neuro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #03050b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* Сетка на фоне */
+        .grid {
+            height: 100vh;
+            width: 100vw;
+            background-image: linear-gradient(to right, #1e1e2f 1px, transparent 1px),
+                              linear-gradient(to bottom, #1e1e2f 1px, transparent 1px);
+            background-size: 2rem 2rem;
+            position: fixed;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Главное окно */
+        .app-window {
+            width: 1400px;
+            max-width: 100%;
+            height: 900px;
+            max-height: 95vh;
+            background: rgba(6, 8, 14, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+            display: flex;
+            overflow: hidden;
+            border: 1px solid rgba(180, 140, 255, 0.1);
+        }
+
+        /* Боковая панель */
+        .history-sidebar {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(130, 90, 220, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 1.8rem 1rem 1.5rem 1.5rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #7a4df0, #b35fd1);
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px #3a2b88;
+        }
+
+        .logo-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(to right, #f0eaff, #cfb5ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .new-chat-btn {
+            background: rgba(80, 60, 180, 0.25);
+            border: 1px solid #6b4fbb;
+            border-radius: 18px;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d3bcff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .history-title {
+            display: flex;
+            justify-content: space-between;
+            color: #afa0d0;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            background: rgba(20, 10, 40, 0.5);
+            border-radius: 14px;
+            color: #e6d9ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .history-item.active {
+            background: rgba(110, 60, 230, 0.3);
+            border: 1px solid #c2a2ff;
+        }
+
+        .user-tag {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 40px;
+            border: 1px solid #5a4a9a;
+            text-decoration: none;
+        }
+
+        .user-avatar {
+            background: linear-gradient(145deg, #6240b0, #392b70);
+            width: 42px;
+            height: 42px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #f0e4ff;
+            font-size: 0.95rem;
+        }
+
+        .user-email {
+            font-size: 0.7rem;
+            color: #bba6f0;
+        }
+
+        /* Чат */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(2, 2, 8, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 1.2rem 2rem;
+            gap: 16px;
+            border-bottom: 1px solid rgba(170, 130, 255, 0.15);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 1px solid #6b569b;
+            color: #d7c4ff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+        }
+
+        .btn-signup {
+            background: linear-gradient(145deg, #4f31b0, #37277a);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 8px 18px #251b60;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 2rem 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 18px;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #1b1240;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #bbaaff;
+        }
+
+        .message.user .message-avatar {
+            background: #452d9a;
+            color: white;
+        }
+
+        .message-bubble {
+            background: #110d25;
+            padding: 1rem 1.4rem;
+            border-radius: 1.8rem;
+            border-top-left-radius: 0.3rem;
+            box-shadow: 0 6px 16px #00000080;
+            color: #ede4ff;
+        }
+
+        .message.user .message-bubble {
+            background: #2a1b62;
+            border-top-right-radius: 0.3rem;
+            border-top-left-radius: 1.8rem;
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #9a86c7;
+            margin-top: 4px;
+        }
+
+        .prompt-section {
+            padding: 1.5rem 2rem 1.8rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid #3f2f7a;
+        }
+
+        /* Строка ввода */
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .enhanced-input {
+            width: 100%;
+            padding: 18px 60px 18px 50px;
+            font-size: 16px;
+            color: #fff;
+            background: rgba(10, 10, 20, 0.8);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9f7aff;
+            font-size: 1.2rem;
+        }
+
+        .send-btn-enhanced {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9f7aff, #c47aff);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Модальные окна */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .modal:target {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 32px;
+            color: #b6a0f0;
+            text-decoration: none;
+            z-index: 1010;
+        }
+
+        .form-container {
+            width: 100%;
+            background: #121212;
+            border: 2px solid #414141;
+            padding: 32px 24px;
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #fff;
+            background-color: transparent;
+            border: 1px solid #414141;
+        }
+
+        .form-submit-btn {
+            display: block;
+            text-align: center;
+            color: #e0e0e0;
+            font-weight: 600;
+            background: #313131;
+            border: 1px solid #414141;
+            padding: 12px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            width: 60%;
+        }
+
+        .switch-auth-mode {
+            display: flex;
+            gap: 12px;
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .switch-auth-mode a {
+            color: #b38eff;
+            text-decoration: none;
+        }
+
+        /* Стили для выбора роли */
+        .role-group {
+            margin-bottom: 20px;
+        }
+
+        .role-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 20px;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .role-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+
+    <div class="app-window">
+        <!-- Левая панель: история -->
+        <div class="history-sidebar">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                <span class="logo-text">Neural</span>
+            </div>
+
+            <a href="new-dialog.html" class="new-chat-btn">
+                <i class="fas fa-pen-to-square"></i> Новый диалог
+            </a>
+
+
+            <a href="account.html" class="user-tag">
+                <div class="user-avatar">Г</div>
+                <div class="user-info">
+                    <div class="user-name">Гость</div>
+                    <div class="user-email">guest@mail.com</div>
+                </div>
+                <i class="fas fa-chevron-down" style="color:#bba6f0;"></i>
+            </a>
+        </div>
+
+        <!-- Правая часть: чат -->
+        <div class="chat-area">
+            <div class="auth-header">
+                <div class="auth-buttons">
+                    <a href="#login" class="btn-login">
+                        <i class="fas fa-arrow-right-to-bracket"></i> Вход
+                    </a>
+                    <a href="#signup" class="btn-signup">
+                        <i class="fas fa-user-plus"></i> Регистрация
+                    </a>
+                </div>
+                <i class="fas fa-sliders" style="color: #bba6f0;"></i>
+            </div>
+
+            <div class="messages-container" id="messages">
+                <div class="message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div>
+                        <div class="message-bubble">Здравствуйте! Я ваша нейросеть. Задайте ваш вопрос.</div>
+                        <div class="message-time">10:23</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-section">
+                <div class="input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="enhanced-input" id="messageInput" placeholder="Ваш запрос...">
+                    <button class="send-btn-enhanced" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div id="login" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-modal">&times;</a>
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Вход в аккаунт</h2>
+                <div class="form-group">
+                    <label>Имя пользователя или email</label>
+                    <input type="text" placeholder="neo@matrix / neo">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" placeholder="··········">
+                </div>
+                <a href="#" class="form-submit-btn">Войти</a>
+                <div class="switch-auth-mode">
+                    <a href="#signup">Нет аккаунта? Регистрация</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div id="signup" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-modal">&times;</a>
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Регистрация</h2>
+
+                <div class="form-group">
+                    <label>Имя и Фамилия</label>
+                    <input type="text" placeholder="Иван Петров">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="ivan@mail.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" placeholder="••••••">
+                </div>
+
+                <!-- Выбор роли -->
+                <div class="role-group">
+                    <label>Выберите роль:</label>
+                    <div class="role-options">
+                        <label class="role-option">
+                            <input type="radio" name="role" value="user" checked>
+                            <span>Пользователь</span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="admin">
+                            <span>Администратор</span>
+                        </label>
+                    </div>
+                </div>
+
+                <a href="#" class="form-submit-btn">Зарегистрироваться</a>
+
+                <div class="switch-auth-mode">
+                    <a href="#login">Уже есть аккаунт? Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const messages = document.getElementById('messages');
+
+            function addMessage(text) {
+                if (text.trim() === '') return;
+
+                const now = new Date();
+                const time = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user';
+                messageDiv.innerHTML = `
+                    <div class="message-avatar"><i class="fas fa-user"></i></div>
+                    <div>
+                        <div class="message-bubble">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+
+                messages.appendChild(messageDiv);
+                input.value = '';
+                messages.scrollTop = messages.scrollHeight;
+
+                setTimeout(function() {
+                    const botDiv = document.createElement('div');
+                    botDiv.className = 'message';
+                    botDiv.innerHTML = `
+                        <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <div class="message-bubble">Спасибо за сообщение! Я обрабатываю: "${text}"</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    `;
+                    messages.appendChild(botDiv);
+                    messages.scrollTop = messages.scrollHeight;
+                }, 1000);
+            }
+
+            sendBtn.addEventListener('click', function() {
+                addMessage(input.value);
+            });
+
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addMessage(input.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
