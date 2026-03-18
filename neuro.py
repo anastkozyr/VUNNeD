@@ -72,8 +72,6 @@ model = models.Sequential([
     layers.Conv1D(256, 5, activation='relu', padding='same'),
     layers.GlobalAveragePooling1D(),
     layers.BatchNormalization(),
-    layers.Dropout(0.5),
-    layers.Dense(128, activation='relu'),
     layers.Dropout(0.3),
     layers.Dense(num_classes, activation='softmax')
 ])
@@ -95,7 +93,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(
 history = model.fit(
     X_train, y_train,
     validation_data=(X_valid, y_valid),
-    epochs=20,
+    epochs=100,
     batch_size=32,
     callbacks=[early_stopping],
     verbose=1
